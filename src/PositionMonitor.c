@@ -59,7 +59,7 @@ static void Ros_PositionMonitor_Initialize_GlobalJointStatePublisher(rmw_qos_pro
         ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, JointState),
         TOPIC_NAME_JOINT_STATES,
         qos_profile);
-    motoRosAssert(ret == RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_JOINT_STATE_ALL);
+    motoRos_ASSERT_EQ_INT(ret, RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_JOINT_STATE_ALL);
 
     //create message for aggregate joint state of all groups
     g_messages_PositionMonitor.jointStateAllGroups = sensor_msgs__msg__JointState__create();
@@ -115,7 +115,7 @@ static void Ros_PositionMonitor_Initialize_PerGroupJointStatePublisher(rmw_qos_p
         ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, JointState),
         formatBuffer,
         qos_profile);
-    motoRosAssert(ret == RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_JOINT_STATE);
+    motoRos_ASSERT_EQ_INT(ret, RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_JOINT_STATE);
 
     //create message for per-group joint states
     ctrlGroup->msgJointState = sensor_msgs__msg__JointState__create();
@@ -179,13 +179,13 @@ static void Ros_PositionMonitor_Initialize_TfPublisher(rmw_qos_profile_t const* 
         ROSIDL_GET_MSG_TYPE_SUPPORT(tf2_msgs, msg, TFMessage),
         formatBuffer,
         qos_profile);
-    motoRosAssert(ret == RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_TRANSFORM);
+    motoRos_ASSERT_EQ_INT(ret, RCL_RET_OK, SUBCODE_FAIL_CREATE_PUBLISHER_TRANSFORM);
 
     //--------------
     //create message for cartesian transform
     g_messages_PositionMonitor.transform = tf2_msgs__msg__TFMessage__create();
 
-    motoRosAssert(geometry_msgs__msg__TransformStamped__Sequence__init(&g_messages_PositionMonitor.transform->transforms, totalRobots * NUMBER_TRANSFORM_LINKS_PER_ROBOT),
+    motoRos_ASSERT_TRUE(geometry_msgs__msg__TransformStamped__Sequence__init(&g_messages_PositionMonitor.transform->transforms, totalRobots * NUMBER_TRANSFORM_LINKS_PER_ROBOT),
                   SUBCODE_FAIL_ALLOCATE_TRANSFORM);
 
     bzero(formatBuffer, MAX_TF_FRAME_NAME_LENGTH);
@@ -312,7 +312,7 @@ void Ros_PositionMonitor_CalculateTransforms(int groupIndex, long* pulsePos_moto
                 snprintf(alarm_msg_buf, ERROR_MSG_MAX_SIZE, "Inv. motion type: %d (axis: %d)",
                     group->baseTrackInfo.motionType[i], i);
                 Ros_Debug_BroadcastMsg("%s: %s", __func__, alarm_msg_buf);
-                motoRosAssert_withMsg(false, SUBCODE_FAIL_INVALID_BASE_TRACK_MOTION_TYPE, alarm_msg_buf);
+                motoRos_ASSERT_FAIL_MESSAGE(SUBCODE_FAIL_INVALID_BASE_TRACK_MOTION_TYPE, alarm_msg_buf);
             }
         }
         mpZYXeulerToFrame(&coordWorldToBase, &frameWorldToTrack);

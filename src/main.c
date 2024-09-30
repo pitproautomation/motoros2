@@ -54,7 +54,7 @@ void RosInitTask()
     g_Ros_Controller.tidIncMoveThread = INVALID_TASK;
 
     //Check to see if another version of MotoROS2.out is running on this controller.
-    motoRosAssert_withMsg(!Ros_IsOtherInstanceRunning(), SUBCODE_MULTIPLE_INSTANCES_DETECTED, "MotoROS2 - Multiple Instances");
+    motoRos_ASSERT_FALSE_MESSAGE(Ros_IsOtherInstanceRunning(), SUBCODE_MULTIPLE_INSTANCES_DETECTED, "MotoROS2 - Multiple Instances");
 
     // init debug broadcast
     Ros_Debug_BroadcastMsg("---");
@@ -116,7 +116,7 @@ void RosInitTask()
         Ros_Communication_Initialize();
 
         // non-recoverable if this fails
-        motoRosAssert(Ros_Controller_Initialize(), SUBCODE_FAIL_ROS_CONTROLLER_INIT);
+        motoRos_ASSERT_TRUE(Ros_Controller_Initialize(), SUBCODE_FAIL_ROS_CONTROLLER_INIT);
 
         Ros_InformChecker_ValidateJob();
 
@@ -176,7 +176,7 @@ void RosInitTask()
                 // force a 'disconnection', so tasks can start shutting down
                 g_Ros_Communication_AgentIsConnected = FALSE;
                 // now assert
-                motoRosAssert(FALSE, SUBCODE_FAIL_IO_STATUS_UPDATE);
+                motoRos_ASSERT_FAIL(SUBCODE_FAIL_IO_STATUS_UPDATE);
             }
 
             //Update robot's feedback position and publish the topics
